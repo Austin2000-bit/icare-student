@@ -1,26 +1,10 @@
-# iCareConnec+ Platform
+# iCare ui
 
-Built on top of OpenMRS, an Open source Medical Records System and a Global Public Good. iCareConnec+ platform takes advantage of System and the global community support provided around the OpenMRS.
+[![Maintainability](https://api.codeclimate.com/v1/badges/8cd93f2a863e6d085a6c/maintainability)](https://codeclimate.com/github/hisptz/icare-ui/maintainability) [![Test Coverage](https://api.codeclimate.com/v1/badges/8cd93f2a863e6d085a6c/test_coverage)](https://codeclimate.com/github/hisptz/icare-ui/test_coverage)
 
-The platform expose APIs for missing services like Billing, Inventory, Laboratory Process etc. The extensive APIs for Billing, Laboratory and Invotory services have made the platform to be able to pruduce EMR meeting Tanzania and African countries EMRs Systems standards, laboratory system standard, pharmacy based or point of sell systems
+UI module for iCARE system
 
-## Components of the platform
-
-iCareConnec+ platform offers the following major module
-
-### Electronic Medical Records (EMRs)
-
-iCareConnec+ platform was built with the aim of coming up with EMRs Solution. This is the default feature of the platform.
-
-### Laboratory Information System
-
-iCareConnec+ has been able to produce Laboratory Information System for the Tanzania National Public Health Laboratory.
-
-### Pharmacy Information System
-
-The comprehensive Store/Inventory management and dispensing has made it possible for the platform to support Pharmacy based Information System.
-
-## Prerequisites - Development
+## Prerequisites
 
 1. [NodeJs (10 or higher)](https://nodejs.org)
 2. npm (6.4.0 or higher), can be installed by running `apt install npm`
@@ -31,13 +15,13 @@ The comprehensive Store/Inventory management and dispensing has made it possible
 Clone repository
 
 ```bash
- git clone https://github.com/udsm-dhis2-lab/icare.git
+ git clone https://github.com/hisptz/icare-ui.git
 ```
 
 Navigate to application root folder
 
 ```bash
-cd icare/ui
+cd icare-ui
 ```
 
 Install all required dependencies for the app
@@ -48,48 +32,70 @@ npm install
 
 ## Development server
 
-Duplicate proxy-config.example.json and rename the copied file to proxy-config.json
+To start development server
 
-Copy the following and paste it to the file proxy-config.json
+`npm start`
 
-```bash
+Navigate to [http://localhost:4200](http://localhost:4200).
+
+This command will require proxy-config.json file available in the root of your source code, usually this file has this format
+
+```json
 {
   "/": {
-    "target":"https://icare.dhis2.udsm.ac.tz",
+    "target": "https://play.dhis2.org/2.29/",
     "secure": "false",
+    "auth": "admin:district",
     "changeOrigin": "true"
   }
 }
 ```
 
-Start the development server
+We have provided `proxy-config.example.json` file as an example, make a copy and rename to `proxy-config.json`
 
-```bash
-npm start
+## Index DB Setup
+
+This app support index DB as based on [dexie library](https://dexie.org/). In order to initiatiate index db then you have to passed index db configuration in forRoot of core module, so in app.module.ts
+
+```ts
+........
+@NgModule({
+  declarations: [AppComponent, ...fromPages.pages],
+  imports: [
+   ..........
+    CoreModule.forRoot({
+      namespace: 'iapps',
+      version: 1,
+      models: {
+        users: 'id',
+        dataElement: 'id',
+        .......
+      }
+    })
+    .......
+    ]
+    ......
+    })
 ```
 
-Navigate to [http://localhost:4200](http://localhost:4200)
+where in the models, for example user will be a table "user" and 'id' will be a keyIndex for the table
 
 ## Build
 
-After making the changes to the backend we build the application so that the omod contains the backend changes by following the steps below:
+To build the project run
 
-Navigate to application root folder
+`npm run build`
 
-```bash
-cd omods/core
-```
-
-Run the following command to build the application
-
-```bash
-mvn clean package -DskipTests
-```
-
-Upload the omod to openmrs.
+The build artifacts will be stored in the `dist/`, this will include a zip file ready for deploying to any DHIS2 instance.
 
 ## Running unit tests
 
+Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
+
 ## Running end-to-end tests
 
+Run `ng e2e` to execute the end-to-end tests via [Protractor](http://www.protractortest.org/).
+
 ## Further help
+
+To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI README](https://github.com/angular/angular-cli/blob/master/README.md).
